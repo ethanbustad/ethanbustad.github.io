@@ -1,0 +1,31 @@
+* {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+body {
+	background-color: #DDD;
+	font-size: 16px;
+}
+
+#main {
+	color: #33363E;
+	font-family: $sans_font;
+	font-size: 4em;
+	height: 100%;
+}
+
+#body {
+	background-color: #EEE;
+	margin: 0 auto;
+	padding: 2em 0;
+	width: 80%;
+
+	div {
+		margin: 0 auto;
+		padding: 1em;
+		text-align: center;
+		width: 80%;
+	}
+}
