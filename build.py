@@ -4,9 +4,15 @@ Builds native html and css files for website:
 * css files are compiled from .scss
 """
 
-# not OOTB: requires 'pip install libsass'
-import libsass
+import os
+# not OOTB: requires 'pip install pyScss'
+from scss.compiler import compile_string
 import sys
+
+
+CSS_OUTPUT_FILENAME = 'css/main.css'
+CSS_INCLUDE_EXTENSIONS = ['.css', '.scss']
+SCSS_DIR = 'css/scss'
 
 
 def all():
@@ -15,7 +21,19 @@ def all():
 
 
 def build_css():
-	# TODO
+	scss_fragments = []
+
+	for filename in sorted(os.listdir(SCSS_DIR)):
+		if any(filename.endswith(ext) for ext in CSS_INCLUDE_EXTENSIONS):
+			with open(os.path.join(SCSS_DIR, filename), 'r') as readfile:
+				scss_fragments.append(readfile.read())
+
+	scss = '\n'.join(scss_fragments)
+
+	css = compile_string(scss)
+
+	with open(CSS_OUTPUT_FILENAME, 'w') as outfile:
+		outfile.write(trim_css(css))
 
 
 def build_html():
@@ -32,6 +50,15 @@ def main(arguments):
 	else:
 		print('Invalid command: ' + str(arguments))
 
-if __name__ == "__main__":
-	main(sys.argv[1:])
 
+def trim_css(css_string):
+	lines = []
+
+	for line in css_string.splitlines():
+		lines.append(line.strip())
+
+	return '\n'.join(lines)
+
+
+if __name__ == '__main__':
+	main(sys.argv[1:])
