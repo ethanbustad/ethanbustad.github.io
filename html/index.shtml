@@ -1,0 +1,15 @@
+<!--#include virtual="_start.shtml" -->
+<!--#include virtual="_head.shtml" -->
+
+<div id="main">
+	<!--#include virtual="_header.shtml" -->
+
+	<div id="body">
+		<div>Coming</div>
+		<div>Soon</div>
+	</div>
+
+	<!--#include virtual="_footer.shtml" -->
+</div>
+
+<!--#include virtual="_end.shtml" -->
