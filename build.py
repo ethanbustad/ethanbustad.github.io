@@ -1,7 +1,17 @@
 """
 Builds native html and css files for website:
-* html files are built from fragments
-* css files are compiled from .scss
+* html files are built from .shtml fragments
+* a main.css file is compiled from .scss fragments
+
+When run from the command line:
+* Legal commands are 'all', 'css', and 'html'.
+* 'all' runs both 'css' and 'html'.
+* Running build.py without a command defaults to 'all'.
+* Any other command yields an error.
+
+When imported as a module:
+* The 'main' function can be run with arguments as above.
+* Helper functions also exist for each piece of functionality above.
 """
 
 import os
