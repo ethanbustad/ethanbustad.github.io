@@ -51,20 +51,20 @@ def build_css():
 
 
 def build_html():
-	pattern = re.compile(HTML_FRAGMENT_REGEX)
-	newline_pattern = re.compile('\n+')
-
 	for filename in os.listdir(HTML_FRAGMENT_DIR):
 		if not filename.startswith(HTML_FRAGMENT_EXCLUDE_PREFIX):
 			with open(os.path.join(HTML_FRAGMENT_DIR, filename), 'r') as readfile:
-				contents = pattern.sub(replace_with_shtml, readfile.read())
+				contents = do_ssi(readfile.read())
 
-			contents = newline_pattern.sub('\n', contents)
-
-			outfilename = filename.replace('.shtml', '.html')
-
-			with open(outfilename, 'w') as outfile:
+			with open(filename.replace('.shtml', '.html'), 'w') as outfile:
 				outfile.write(contents)
+
+
+def do_ssi(contents):
+	newline_pattern = re.compile('\n+')
+	pattern = re.compile(HTML_FRAGMENT_REGEX)
+	contents = pattern.sub(replace_with_shtml, contents)
+	return newline_pattern.sub('\n', contents)
 
 
 def main(arguments):
@@ -82,7 +82,7 @@ def replace_with_shtml(match):
 	subfilename = match.group(1)
 
 	with open(os.path.join(HTML_FRAGMENT_DIR, subfilename), 'r') as subfile:
-		return subfile.read()
+		return do_ssi(subfile.read())
 
 
 def trim_css(css_string):
