@@ -5,14 +5,18 @@ Builds native html and css files for website:
 """
 
 import os
+import re
 # not OOTB: requires 'pip install pyScss'
 from scss.compiler import compile_string
 import sys
 
 
-CSS_OUTPUT_FILENAME = 'css/main.css'
+CSS_FRAGMENT_DIR = 'css/scss'
 CSS_INCLUDE_EXTENSIONS = ['.css', '.scss']
-SCSS_DIR = 'css/scss'
+CSS_OUTPUT_FILENAME = 'css/main.css'
+HTML_FRAGMENT_DIR = 'html'
+HTML_FRAGMENT_EXCLUDE_PREFIX = '_'
+HTML_FRAGMENT_REGEX = '<!--#include virtual="(.+?)" -->'
 
 
 def all():
@@ -23,9 +27,9 @@ def all():
 def build_css():
 	scss_fragments = []
 
-	for filename in sorted(os.listdir(SCSS_DIR)):
+	for filename in sorted(os.listdir(CSS_FRAGMENT_DIR)):
 		if any(filename.endswith(ext) for ext in CSS_INCLUDE_EXTENSIONS):
-			with open(os.path.join(SCSS_DIR, filename), 'r') as readfile:
+			with open(os.path.join(CSS_FRAGMENT_DIR, filename), 'r') as readfile:
 				scss_fragments.append(readfile.read())
 
 	scss = '\n'.join(scss_fragments)
@@ -37,7 +41,20 @@ def build_css():
 
 
 def build_html():
-	# TODO
+	pattern = re.compile(HTML_FRAGMENT_REGEX)
+	newline_pattern = re.compile('\n+')
+
+	for filename in os.listdir(HTML_FRAGMENT_DIR):
+		if not filename.startswith(HTML_FRAGMENT_EXCLUDE_PREFIX):
+			with open(os.path.join(HTML_FRAGMENT_DIR, filename), 'r') as readfile:
+				contents = pattern.sub(replace_with_shtml, readfile.read())
+
+			contents = newline_pattern.sub('\n', contents)
+
+			outfilename = filename.replace('.shtml', '.html')
+
+			with open(outfilename, 'w') as outfile:
+				outfile.write(contents)
 
 
 def main(arguments):
@@ -49,6 +66,13 @@ def main(arguments):
 		build_html()
 	else:
 		print('Invalid command: ' + str(arguments))
+
+
+def replace_with_shtml(match):
+	subfilename = match.group(1)
+
+	with open(os.path.join(HTML_FRAGMENT_DIR, subfilename), 'r') as subfile:
+		return subfile.read()
 
 
 def trim_css(css_string):
