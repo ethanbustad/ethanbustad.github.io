@@ -61,7 +61,7 @@
 			}
 
 			function encodeNames(e) {
-				var namesText = document.getElementById('names').value;
+				var namesText = document.getElementById('names').value.trim();
 				var names = namesText.split(/,\s?/i);
 				names = names
 					.map(name => ({name, num: Math.random()}))
@@ -80,7 +80,7 @@
 			function revealName(e) {
 				var params = new URLSearchParams(window.location.search);
 				var names = decodeURIComponent(escape(window.atob(data))).split(',');
-				var giver = document.getElementById('myName').value;
+				var giver = document.getElementById('myName').value.trim();
 				outputRecipient(giver, names);
 				document.getElementById('submit2').disabled = true;
 			};
