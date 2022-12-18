@@ -24,6 +24,7 @@
 			</form>
 
 			<form class="hidden" id="form2" onsubmit="revealName(event); return false;">
+				<p id="namesHelper"></p>
 				<label for="myName">What's your name? (Don't cheat, be honest!)</label><br />
 				<input id="myName" name="myName" type="text" />
 				<button id="submit2" name="submit2" type="submit">Submit</button>
@@ -38,6 +39,9 @@
 			if (!data) {
 				document.getElementById('form1').classList.remove('hidden');
 			} else {
+				var names = decodeURIComponent(escape(window.atob(data))).split(',');
+				names = [...names].sort();
+				document.getElementById('namesHelper').innerHTML = 'Available names are: ' + names.join(', ') + '.';
 				document.getElementById('form2').classList.remove('hidden');
 			}
 
