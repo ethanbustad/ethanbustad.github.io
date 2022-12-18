@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			.button-row button {
+				display: inline-block;
+			}
+
+			.hidden {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="main">
+			<form class="hidden" id="form1" onsubmit="encodeNames(event); return false;">
+				<label for="names">Enter names (comma-delimited)</label><br />
+				<textarea id="names" name="names"></textarea>
+
+				<div class="button-row">
+					<button id="submit1" name="submit1" type="submit">Submit</button>
+					<button id="test" name="test" type="submit">Test</button>
+				</div>
+			</form>
+
+			<form class="hidden" id="form2" onsubmit="revealName(event); return false;">
+				<label for="myName">What's your name? (Don't cheat, be honest!)</label><br />
+				<input id="myName" name="myName" type="text" />
+				<button id="submit2" name="submit2" type="submit">Submit</button>
+			</form>
+
+			<div id="output"></div>
+		</div>
+		<script>
+			var params = new URLSearchParams(window.location.search);
+			var data = params.get('data');
+
+			if (!data) {
+				document.getElementById('form1').classList.remove('hidden');
+			} else {
+				document.getElementById('form2').classList.remove('hidden');
+			}
+
+			function outputLink(names) {
+				var url = new URL(window.location.href);
+				var param = window.btoa(unescape(encodeURIComponent(names.join())));
+				url.searchParams.set("data", param);
+				var link = '<a href="' + url.toString() + '">' + url.toString() + '</a';
+				document.getElementById('output').innerHTML = link;
+			}
+
+			function outputRecipient(giver, names) {
+				var giverIdx = names.indexOf(giver);
+				var recipient = giverIdx === 0 ? names[names.length - 1] : names[giverIdx - 1];
+				var text = giver + ' gives to ' + recipient + '<br />';
+				document.getElementById('output').innerHTML += text;
+			}
+
+			function encodeNames(e) {
+				var namesText = document.getElementById('names').value;
+				var names = namesText.split(/,\s?/i);
+				names = names
+					.map(name => ({name, num: Math.random()}))
+					.sort((a, b) => a.num - b.num)
+					.map(({name}) => name);
+
+				if (document.activeElement.name === 'test') {
+					names.forEach(function(giver) {
+						outputRecipient(giver, names);
+					});
+				} else {
+					outputLink(names);
+				}
+			};
+
+			function revealName(e) {
+				var params = new URLSearchParams(window.location.search);
+				var names = decodeURIComponent(escape(window.atob(data))).split(',');
+				var giver = document.getElementById('myName').value;
+				outputRecipient(giver, names);
+				document.getElementById('submit2').disabled = true;
+			};
+		</script>
+	</body>
+</html>
